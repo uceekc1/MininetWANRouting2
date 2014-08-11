@@ -8,7 +8,7 @@ from pox.lib.packet import *
 import pox.lib.packet as pkt
 from pox.lib.addresses import *
 from pox.lib.revent import *
-from pox.lib.packet.ethernet import ethernet, ETHER_BROADCAST
+from pox.lib.packet.ethernet import ethernet, ETHER_BROADCAST 
 #import sys
 #sys.path.append("/mininet/custom")
 import sys
