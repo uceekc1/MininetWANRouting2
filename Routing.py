@@ -32,11 +32,11 @@ class MiniNetwork:
         self.links = links
         temp = self.graph.nodes()
         temp.sort()
-	    for node in temp:
-	        if 'h' in node:
-		    self.hosts.append(node)
-	        elif 's' in node:
-		    self.switches.append(node)
+	for node in temp:
+	    if 'h' in node:
+		self.hosts.append(node)
+	    elif 's' in node:
+		self.switches.append(node)
     	for switch in self.switches:
             for host in self.hosts:
                 ipSeries = nx.dijkstra_path(graph,switch,host)
@@ -71,7 +71,7 @@ for i in range(len(linkBwSwitches)):
     linkAndWeight[linkBwSwitches[i]] = max_link_weight
     G2 = nx.Graph()
     print linkAndWeight
-    for key,value in linkAndWeight.iteritems():
+for key,value in linkAndWeight.iteritems():
 	G2.add_weighted_edges_from([(key[0],key[1],int(value))])
     linkTopo[linkBwSwitches[i]] = MiniNetwork(G2,link1)
     linkAndWeight[linkBwSwitches[i]] = original
