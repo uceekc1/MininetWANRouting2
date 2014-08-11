@@ -32,11 +32,11 @@ class MiniNetwork:
         self.links = links
         temp = self.graph.nodes()
         temp.sort()
-	for node in temp:
-	    if 'h' in node:
-		self.hosts.append(node)
-	    elif 's' in node:
-		self.switches.append(node)
+	    for node in temp:
+	        if 'h' in node:
+		        self.hosts.append(node)
+	        elif 's' in node:
+		        self.switches.append(node)
     	for switch in self.switches:
             for host in self.hosts:
                 ipSeries = nx.dijkstra_path(graph,switch,host)
@@ -72,7 +72,7 @@ for i in range(len(linkBwSwitches)):
     G2 = nx.Graph()
     print linkAndWeight
 for key,value in linkAndWeight.iteritems():
-	G2.add_weighted_edges_from([(key[0],key[1],int(value))])
+	    G2.add_weighted_edges_from([(key[0],key[1],int(value))])
     linkTopo[linkBwSwitches[i]] = MiniNetwork(G2,link1)
     linkAndWeight[linkBwSwitches[i]] = original
 #network2 = MiniNetwork(G2,link1) #s1 and s2 break, pop(2)
@@ -113,7 +113,6 @@ def _handle_PortStatus(event):
             connection.send(msg)
         for connection in core.openflow.connections:
             currSwitch = Dpid_To_Ip[connection.dpid]
-	    print brokenLink, linkTopo[brokenLink]
             for host in linkTopo[brokenLink].hosts:
                 portNum = linkTopo[brokenLink].GetPortNumAndMacAddr(currSwitch,host)#get the destination IP address of the host, get its MAC address from the arpTable.
                 MacAddr = arpTable[getValue(host)[0]]
@@ -132,27 +131,27 @@ def _handle_PortStatus(event):
             connection.send(msg)
         for connection in core.openflow.connections:
             currSwitch = Dpid_To_Ip[connection.dpid]
-        for host in network1.hosts:
-            portNum = network1.GetPortNumAndMacAddr(currSwitch,host)
-            MacAddr = arpTable[getValue(host)[0]]
-            msg = of.ofp_flow_mod()
-            msg.match.dl_type = 0x800
-            msg.match.nw_dst = IPAddr(getValue(host)[0])
-            msg.actions.append(of.ofp_action_dl_addr.set_dst(EthAddr(MacAddr)))
-            msg.actions.append(of.ofp_action_output(port = portNum))
-            connection.send(msg)
+            for host in network1.hosts:
+                portNum = network1.GetPortNumAndMacAddr(currSwitch,host)
+                MacAddr = arpTable[getValue(host)[0]]
+                msg = of.ofp_flow_mod()
+                msg.match.dl_type = 0x800
+                msg.match.nw_dst = IPAddr(getValue(host)[0])
+                msg.actions.append(of.ofp_action_dl_addr.set_dst(EthAddr(MacAddr)))
+                msg.actions.append(of.ofp_action_output(port = portNum))
+                connection.send(msg)
 
 lost_packets = {}
 
 def _send_paused_traffic(dpid,ipaddr,port):
     if (dpid,ipaddr) in lost_packets:
-	bucket = lost_packets[(dpid,ipaddr)]
-	del lost_packets[(dpid,ipaddr)]
-	for buffer_id,in_port in bucket:
-	    po = of.ofp_packet_out(buffer_id = buffer_id, in_port = in_port)
-	    po.actions.append(of.ofp_action_dl_addr.set_dst(arpTable[ipaddr]))
-	    po.actions.append(of.ofp_action_output(port = port))
-	    core.openflow.sendToDPID(dpid,po)
+	    bucket = lost_packets[(dpid,ipaddr)]
+	    del lost_packets[(dpid,ipaddr)]
+	    for buffer_id,in_port in bucket:
+	        po = of.ofp_packet_out(buffer_id = buffer_id, in_port = in_port)
+	        po.actions.append(of.ofp_action_dl_addr.set_dst(arpTable[ipaddr]))
+	        po.actions.append(of.ofp_action_output(port = port))
+	        core.openflow.sendToDPID(dpid,po)
     
 def _handle_PacketIn (event): # after receive the PacketIn message, handle it. get the information about the packet, get the
     #Learn the desintation IP address and fill up routing table, according to my store of edge list, get the port number
@@ -160,7 +159,7 @@ def _handle_PacketIn (event): # after receive the PacketIn message, handle it. g
     packet = event.parsed
     #print packet.src
     if packet.type ==  ethernet.IPV6_TYPE:
-	return
+	    return
     srcSwitch = "s" + str(event.dpid)
     print srcSwitch
     print packet.type,event.port
@@ -168,42 +167,42 @@ def _handle_PacketIn (event): # after receive the PacketIn message, handle it. g
     if isinstance(packet.next, arp):  #This solves the problem of turning every ARP into IP packets
         a = packet.next
         #destinationIP = a.protodst
-	#dstIPtest = getKey(destinationIP)
-	#test = network1.GetPortNumAndMacAddr(srcSwitch, dstIPtest)
-	if a.prototype == arp.PROTO_TYPE_IP:
-	    if a.hwtype == arp.HW_TYPE_ETHERNET:
-		    if a.protosrc != 0:
-		        arpTable[str(a.protosrc)] = packet.src
-		        print arpTable
-		        _send_paused_traffic(event.dpid,str(a.protosrc),event.port)
-        	    if a.opcode == a.REQUEST:
-			        if str(a.protodst) in arpTable:
-            		    r = pkt.arp()
-            		    r.hwtype = a.hwtype
-            		    r.prototype = a.prototype
-            		    r.hwlen = a.hwlen
-            		    r.protolen = a.protolen
-            		    r.opcode = a.REPLY
-            		    r.hwdst = a.hwsrc
+	    #dstIPtest = getKey(destinationIP)
+	    #test = network1.GetPortNumAndMacAddr(srcSwitch, dstIPtest)
+	    if a.prototype == arp.PROTO_TYPE_IP:
+	        if a.hwtype == arp.HW_TYPE_ETHERNET:
+		        if a.protosrc != 0:
+		            arpTable[str(a.protosrc)] = packet.src
+		            print arpTable
+		            _send_paused_traffic(event.dpid,str(a.protosrc),event.port)
+        	        if a.opcode == a.REQUEST:
+			            if str(a.protodst) in arpTable:
+            		        r = pkt.arp()
+            		        r.hwtype = a.hwtype
+            		        r.prototype = a.prototype
+            		        r.hwlen = a.hwlen
+            		        r.protolen = a.protolen
+            		        r.opcode = a.REPLY
+            		        r.hwdst = a.hwsrc
             #r.hwsrc = switchMac[a.protodst]
-            		    r.hwsrc = arpTable[str(a.protodst)]
-            		    r.protodst = a.protosrc
+            		        r.hwsrc = arpTable[str(a.protodst)]
+            		        r.protodst = a.protosrc
             #print a.protodst.toRaw
             #print (r.protodst.toStr == "192.168.70.2")
             #if(r.protodst == IPAddr("192.168.70.2")):
             #if(r.protodst == IPAddr("192.168.10.1")):
             #r.hwsrc = EthAddr("52:fa:e1:4c:d1:6c")
-            		    r.protosrc = a.protodst #a.protodst is the destination IP addresses
-            		    e = pkt.ethernet(type=packet.type, src=r.hwsrc, dst=a.hwsrc)
-            		    e.payload = r
-            		    msg = of.ofp_packet_out()
-            		    msg.data = e.pack()
-            		    msg.actions.append(of.ofp_action_output(port = of.OFPP_IN_PORT))
-            		    msg.in_port = event.port
-            		    event.connection.send(msg)
-			else:
-			    msg = of.ofp_packet_out(in_port = event.port, action = of.ofp_action_output(port = of.OFPP_IN_PORT))
-			    event.connection.send(msg)
+            		        r.protosrc = a.protodst #a.protodst is the destination IP addresses
+            		        e = pkt.ethernet(type=packet.type, src=r.hwsrc, dst=a.hwsrc)
+            		        e.payload = r
+            		        msg = of.ofp_packet_out()
+            		        msg.data = e.pack()
+            		        msg.actions.append(of.ofp_action_output(port = of.OFPP_IN_PORT))
+            		        msg.in_port = event.port
+            		        event.connection.send(msg)
+			            else:
+			                msg = of.ofp_packet_out(in_port = event.port, action = of.ofp_action_output(port = of.OFPP_IN_PORT))
+			                event.connection.send(msg)
 	#destinationIP = a.protodst
 	#dstIPtest = getKey(destinationIP)
 	#print dstIPtest
@@ -211,15 +210,15 @@ def _handle_PacketIn (event): # after receive the PacketIn message, handle it. g
 	#msg = of.ofp_packet_out(action = of.ofp_action_output(port = of.OFPP_FLOOD))
 	#event.connection.send(msg)
     elif isinstance(packet.next, ipv4): #begin to receive IP packets, from each switch, controller needs to make the right move to send the packet into the right port. 
-   	arpTable[str(packet.next.srcip)] = packet.src
-    dstIp = packet.next.dstip #get the packet's destination IP address
-    desHost = getKey(dstIp)
+   	    arpTable[str(packet.next.srcip)] = packet.src
+        dstIp = packet.next.dstip #get the packet's destination IP address
+        desHost = getKey(dstIp)
 	#print srcSwitch
-	port = network1.GetPortNumAndMacAddr(srcSwitch,desHost)
+	    port = network1.GetPortNumAndMacAddr(srcSwitch,desHost)
 	#print pair
 	#_send_paused_traffic(event.dpid, str(packet.next.srcip), event.port)
-	if str(dstIp) in arpTable:
-	    #desHost = getKey(dstIp)
+	    if str(dstIp) in arpTable:
+	        #desHost = getKey(dstIp)
             #pair = network1.GetPortNumAndMacAddr(srcSwitch,desHost)
 	        NextPort = port
 	        DstMAC = arpTable[str(dstIp)]
@@ -230,52 +229,52 @@ def _handle_PacketIn (event): # after receive the PacketIn message, handle it. g
             msg.actions.append(of.ofp_action_dl_addr.set_dst(DstMAC))
             msg.actions.append(of.ofp_action_output(port = NextPort))
             event.connection.send(msg)
-	else:
-	    if (event.dpid,str(dstIp)) not in lost_packets:
-		lost_packets[(event.dpid,str(dstIp))] = []
-	    bucket = lost_packets[(event.dpid,str(dstIp))]
-	    entry = (event.ofp.buffer_id,event.port)
-	    bucket.append(entry)
-	    while len(bucket) > 5: del bucket[0]
+	    else:
+	        if (event.dpid,str(dstIp)) not in lost_packets:
+		        lost_packets[(event.dpid,str(dstIp))] = []
+	        bucket = lost_packets[(event.dpid,str(dstIp))]
+	        entry = (event.ofp.buffer_id,event.port)
+	        bucket.append(entry)
+	        while len(bucket) > 5: del bucket[0]
 
 
-	    if srcSwitch in SwitchNameWithConnectingHosts:
-		    if str(dstIp) in SwitchNameWithConnectingHosts[srcSwitch]:
+	        if srcSwitch in SwitchNameWithConnectingHosts:
+		        if str(dstIp) in SwitchNameWithConnectingHosts[srcSwitch]:
 	    #ARPnextPort = pair[0]
 	    #print ARPnextPort
-	    	    r = arp()
-	    	    r.hwtype = r.HW_TYPE_ETHERNET
-	    	    r.prototype = r.PROTO_TYPE_IP
-	    	    r.hwlen = 6
-	    	    r.protolen = r.protolen
-	    	    r.opcode = r.REQUEST
-   	    	    r.hwdst = ETHER_BROADCAST
-	    	    r.protodst = dstIp
-	    	    r.hwsrc = packet.src
-	    	    r.protosrc = packet.next.srcip
-	    	    e = ethernet(type = ethernet.ARP_TYPE, src = packet.src, dst = ETHER_BROADCAST)
-	    	    e.set_payload(r)
-	    	    msg = of.ofp_packet_out()
-	    	    msg.data = e.pack()
-	    	    msg.actions.append(of.ofp_action_output(port = port))
-	    	    msg.in_port = event.port
-	     	    event.connection.send(msg)
-		    else:
-		        NextPortNum = pair[0]
+	    	        r = arp()
+	    	        r.hwtype = r.HW_TYPE_ETHERNET
+	    	        r.prototype = r.PROTO_TYPE_IP
+	    	        r.hwlen = 6
+	    	        r.protolen = r.protolen
+	    	        r.opcode = r.REQUEST
+   	    	        r.hwdst = ETHER_BROADCAST
+	    	        r.protodst = dstIp
+	    	        r.hwsrc = packet.src
+	    	        r.protosrc = packet.next.srcip
+	    	        e = ethernet(type = ethernet.ARP_TYPE, src = packet.src, dst = ETHER_BROADCAST)
+	    	        e.set_payload(r)
+	    	        msg = of.ofp_packet_out()
+	    	        msg.data = e.pack()
+	    	        msg.actions.append(of.ofp_action_output(port = port))
+	    	        msg.in_port = event.port
+	     	        event.connection.send(msg)
+		        else:
+		            NextPortNum = pair[0]
+		            msg = of.ofp_flow_mod()
+		            msg.match.dl_type = 0x800
+		            msg.match.nw_dst = dstIp
+		            msg.data = event.ofp
+		            msg.actions.append(of.ofp_action_output(port = port))
+	   	            event.connection.send(msg)
+            else:
+		        NextPortNum2 = pair[0]
 		        msg = of.ofp_flow_mod()
 		        msg.match.dl_type = 0x800
-		        msg.match.nw_dst = dstIp
+	  	        msg.match.nw_dst = dstIp
 		        msg.data = event.ofp
 		        msg.actions.append(of.ofp_action_output(port = port))
-	   	        event.connection.send(msg)
-        else:
-		    NextPortNum2 = pair[0]
-		    msg = of.ofp_flow_mod()
-		    msg.match.dl_type = 0x800
-	  	    msg.match.nw_dst = dstIp
-		    msg.data = event.ofp
-		    msg.actions.append(of.ofp_action_output(port = port))
-		    event.connection.send(msg)
+		        event.connection.send(msg)
 
 def launch ():
     core.openflow.addListenerByName("PacketIn", _handle_PacketIn)

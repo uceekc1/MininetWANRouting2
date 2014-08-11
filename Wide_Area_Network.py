@@ -47,25 +47,25 @@ with open("WAN.txt") as f:
 SwitchNameWithConnectingHosts = {}
 for i in information:
     for j in i:
-	if 'h' in j:
-	    index = i.index(j)
-	    if (index == 0):
-		index2 = index + 1
-		if i[index2] in SwitchIntfsWithHost:
-		    SwitchIntfsWithHost[i[index2]].append(i[index2 + 2])
-		    SwitchNameWithConnectingHosts[i[index2]].append(i[index2 + 1])
-		else:
-		    SwitchIntfsWithHost[i[index2]] = [i[index2 + 2]]
-		    SwitchNameWithConnectingHosts[i[index2]] = [i[index2 + 1]]
-	    if (index == 1):
-		index2 = index - 1
-		if i[index2] in SwitchIntfsWithHost:
-		    SwitchIntfsWithHost[i[index2]].append(i[index2 + 2])
-		    SwitchNameWithConnectingHosts[i[index2]].append(i[index2 + 3])
-		else:
-		    SwitchIntfsWithHost[i[index2]] = [i[index2 + 2]]
-		    SwitchNameWithConnectingHosts[i[index2]] = [i[index2 + 3]]
-	    HostIP[j] = i[index+2] #next next index
+	    if 'h' in j:
+	        index = i.index(j)
+	        if (index == 0):
+		        index2 = index + 1
+		        if i[index2] in SwitchIntfsWithHost:
+		            SwitchIntfsWithHost[i[index2]].append(i[index2 + 2])
+		            SwitchNameWithConnectingHosts[i[index2]].append(i[index2 + 1])
+		        else:
+		            SwitchIntfsWithHost[i[index2]] = [i[index2 + 2]]
+		        SwitchNameWithConnectingHosts[i[index2]] = [i[index2 + 1]]
+	        if (index == 1):
+		        index2 = index - 1
+		        if i[index2] in SwitchIntfsWithHost:
+		            SwitchIntfsWithHost[i[index2]].append(i[index2 + 2])
+		            SwitchNameWithConnectingHosts[i[index2]].append(i[index2 + 3])
+		        else:
+		            SwitchIntfsWithHost[i[index2]] = [i[index2 + 2]]
+		            SwitchNameWithConnectingHosts[i[index2]] = [i[index2 + 3]]
+	        HostIP[j] = i[index+2] #next next index
 	
 #print SwitchNameWithConnectingHosts
 
@@ -113,7 +113,7 @@ for key,value in temp.iteritems():
 linkBwSwitches = []
 for key,value in linkAndWeight.iteritems():
     if value != '0':
-	linkBwSwitches.append(key)
+	    linkBwSwitches.append(key)
 
 #first link failure
 #original =  linkAndWeight[list[0]]
@@ -168,7 +168,7 @@ def emptyNet():
             #print nodes[str(switch)][i]
             intfName[i].setIP(nodes[str(switch)][i], prefixLen = 24) #set IP address for that specific interface of this switch
             #print intfName[i].ifconfig
-	    #print intfName[i], intfName[i].MAC() #may put them into a dictionary
+	        #print intfName[i], intfName[i].MAC() #may put them into a dictionary
             #print intfName[i].IP(), intfName[i].MAC()
             switchMac[intfName[i].IP()] = intfName[i].MAC()
             
@@ -178,8 +178,8 @@ def emptyNet():
         #print interface
         interface = host.intf()
         host.setIP(nodes[str(host)][0],prefixLen = 24)
-	#print host.intfIsUp()
-	#host.setDefaultRoute(interface)
+	    #print host.intfIsUp()
+	    #host.setDefaultRoute(interface)
         host.cmd("sudo route add default netmask 0.0.0.0 gw " + str(interface.link.intf1.IP()))
         #interface.cmd("route del -net ")
         #host.cmd("sudo arp -s " + str(interface.link.intf1.IP()), str(interface.link.intf1.MAC()))
@@ -236,11 +236,11 @@ def test2(): # This function can bring a link down and up.
 def test3():
     while(True):
         net.iperf([net.getNodeByName('h1'), net.getNodeByName('h3')],l4Type='UDP',udpBw='10M')
- 	#net.pingFull([net.getNodeByName('h1'), net.getNodeByName('h3')])
+ 	    #net.pingFull([net.getNodeByName('h1'), net.getNodeByName('h3')])
 
 def test5():
     while(True):
-	net.iperf([net.getNodeByName('h1'), net.getNodeByName('h4')],l4Type='UDP',udpBw='10M')
+	    net.iperf([net.getNodeByName('h1'), net.getNodeByName('h4')],l4Type='UDP',udpBw='10M')
 
 def test6():
     while(True):
@@ -252,10 +252,10 @@ def test7():
 
 def test4():
     print connections[2][0],connections[2][1]
-    for switch in net.switches:
-        if str(switch) == 's1':
-            intfName = switch.intfList()[1:]
-            net.addLink(intfName[2].link)
+        for switch in net.switches:
+            if str(switch) == 's1':
+                intfName = switch.intfList()[1:]
+                net.addLink(intfName[2].link)
 
 def test8():
     #print 'hi'
@@ -264,13 +264,13 @@ def test8():
 def test9():
     for host in net.hosts:        
         if str(host) == 'h2':
-	    host.cmd("ping 192.168.60.1")
-	if str(host) == 'h3':
-	    host.cmd("ping 192.168.10.1")
-	if str(host) == 'h1':
-	    host.cmd("iperf -s &")
-	if str(host) == 'h4':
-	    host.cmd("iperf -c 192.168.10.1")
+	        host.cmd("ping 192.168.60.1")
+	    if str(host) == 'h3':
+	        host.cmd("ping 192.168.10.1")
+	    if str(host) == 'h1':
+	        host.cmd("iperf -s &")
+	    if str(host) == 'h4':
+	        host.cmd("iperf -c 192.168.10.1")
 
 if __name__ == '__main__':
     setLogLevel( 'info' )
@@ -291,14 +291,3 @@ if __name__ == '__main__':
     #t2.join()
     #time.sleep(2)
     #threading.Thread(target = test7).start()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
