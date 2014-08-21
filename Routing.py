@@ -49,6 +49,10 @@ class MiniNetwork:
 
 arpTable = {} # store {Host IP address : Host MAC address} , for MAC learning.
     
+for list in SwitchIntfsWithHost.values():
+    for dstIPAddr in list:
+    	arpTable[dstIPAddr] = EthAddr("96:d7:9d:87:60:10")
+
 def getKey(value):   #from the IP address, get the hosts/switches name according to File.
     for name,ip in nodes.iteritems():
         if ip[0] == value:
