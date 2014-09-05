@@ -167,9 +167,6 @@ def emptyNet():
         for i in range(len(intfName)):
             #print nodes[str(switch)][i]
             intfName[i].setIP(nodes[str(switch)][i], prefixLen = 24) #set IP address for that specific interface of this switch
-            #print intfName[i].ifconfig
-	        #print intfName[i], intfName[i].MAC() #may put them into a dictionary
-            #print intfName[i].IP(), intfName[i].MAC()
             switchMac[intfName[i].IP()] = intfName[i].MAC()
             
 #Add 1 interface for hosts
@@ -220,10 +217,6 @@ def test2(): # This function can bring a link down and up.
             intfName[2].ifconfig("up")
             print intfName[2].isUp()
 	        time.sleep(10)
-            #interface2 = intfName[2].link.intf2
-            #print switch.intfIsUp(switch.intfList()[3])
-            #time.sleep(5)
-            #intfName[2].link.makeIntfPair(str(intfName[2]),str(interface2))
 	    if str(switch) == 's2':
 	        intfName = switch.intfList()[1:]
 	        intfName[2].ifconfig("down")
@@ -231,63 +224,11 @@ def test2(): # This function can bring a link down and up.
 	        time.sleep(8)
 	        intfName[2].ifconfig("up")
 	        print intfName[2].isUp()        
-            #net.addLink(net.getNodeByName(connections[2][0]), net.getNodeByName(connections[2][1]))
-
-def test3():
-    while(True):
-        net.iperf([net.getNodeByName('h1'), net.getNodeByName('h3')],l4Type='UDP',udpBw='10M')
- 	    #net.pingFull([net.getNodeByName('h1'), net.getNodeByName('h3')])
-
-def test5():
-    while(True):
-	    net.iperf([net.getNodeByName('h1'), net.getNodeByName('h4')],l4Type='UDP',udpBw='10M')
-
-def test6():
-    while(True):
-        net.pingFull([net.getNodeByName('h2'), net.getNodeByName('h3')])
-
-def test7():
-    while(True):
-        net.iperf([net.getNodeByName('h2'), net.getNodeByName('h4')],l4Type='UDP',udpBw='10M')
-
-def test4():
-    print connections[2][0],connections[2][1]
-        for switch in net.switches:
-            if str(switch) == 's1':
-                intfName = switch.intfList()[1:]
-                net.addLink(intfName[2].link)
-
-def test8():
-    #print 'hi'
-    cli.do_link('link s1 s2 down')
-
-def test9():
-    for host in net.hosts:        
-        if str(host) == 'h2':
-	        host.cmd("ping 192.168.60.1")
-	    if str(host) == 'h3':
-	        host.cmd("ping 192.168.10.1")
-	    if str(host) == 'h1':
-	        host.cmd("iperf -s &")
-	    if str(host) == 'h4':
-	        host.cmd("iperf -c 192.168.10.1")
+            
 
 if __name__ == '__main__':
     setLogLevel( 'info' )
     threading.Thread(target = emptyNet).start()
     time.sleep(20)
-    #threading.Thread(target = test1).start()
     t1 = threading.Thread(target = test2)
     t1.start()
-    #t1.join()
-    #t1._stop()
-    #time.sleep()
-    
-    #threading.Thread(target = test5).start()
-    #time.sleep(2)
-    #threading.Thread(target = test3)._stop()
-    #t2 = threading.Thread(target = test6)
-    #t2.start()
-    #t2.join()
-    #time.sleep(2)
-    #threading.Thread(target = test7).start() 
