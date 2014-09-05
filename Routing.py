@@ -79,14 +79,7 @@ for key,value in linkAndWeight.iteritems():
 	G2.add_weighted_edges_from([(key[0],key[1],int(value))])
     linkTopo[linkBwSwitches[i]] = MiniNetwork(G2,link1)
     linkAndWeight[linkBwSwitches[i]] = original
-#network2 = MiniNetwork(G2,link1) #s1 and s2 break, pop(2)
-#networkList = []
-#networkList.append(network2)
-#linkTopo = {}
-#for i in range(len(linkAndWeightNoHosts)):
-#    if (i == 0):
-#    	linkTopo[linkAndWeightNoHosts[i][0]] = networkList[i]
-print linkTopo
+
 def _handle_ConnectionUp(event):
     currSwitch = Dpid_To_Ip[event.dpid]
     for host in network1.hosts:
